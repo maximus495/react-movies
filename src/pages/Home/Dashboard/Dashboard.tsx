@@ -156,9 +156,6 @@ const Dashboard = memo(() => {
 
           const maxOverviewLength = 150;
           const truncatedOverview = overview.length > maxOverviewLength ? `${overview.substring(0, maxOverviewLength)}...` : overview;
-
-
-
           const genreNames = genre_ids.map((genreId: any) => {
             const genre: any = genres.find((genre: { id: any; }) => genre.id === genreId);
             return genre ? genre.name : 'Unknown Genre';
