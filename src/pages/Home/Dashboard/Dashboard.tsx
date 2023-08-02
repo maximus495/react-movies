@@ -152,7 +152,7 @@ const Dashboard = memo(() => {
         <h1 className="title-category">{movieType}</h1>
         
         <div className="div-images">
-        {images.results.map(({ id, poster_path, title, overview, genre_ids }) => {
+        {images.results.map(({ id, poster_path, title, overview, genre_ids, release_date, vote_average }) => {
 
           const maxOverviewLength = 150;
           const truncatedOverview = overview.length > maxOverviewLength ? `${overview.substring(0, maxOverviewLength)}...` : overview;
@@ -178,9 +178,9 @@ const Dashboard = memo(() => {
               {showInfo[id] && (
                 <div className="movie-info">
                   <h3>{title}</h3>
-                  <p>Genres: {genreNames.join(', ')}</p>
+                  <p>Genres: {genreNames.join(', ')} /Lanzamiento: {release_date}</p>
                   <p>{truncatedOverview}</p>
-                  
+                  <p>Popularidad: {vote_average} </p>
                 </div>
               )}
             </div>
