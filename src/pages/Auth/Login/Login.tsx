@@ -8,7 +8,7 @@ import { useState } from "react";
 
 const Login = () => {
   
-  const { handleChangeEmail, handleToken, Email } = useLogin();
+  const { handleChangeEmail, handleChangePass, handleToken, Email, pass } = useLogin();
   const [isChecked, setIsChecked] = useState(false); 
   
 
@@ -34,6 +34,16 @@ const Login = () => {
           placeholder=""
           onChange={handleChangeEmail}
           value={Email}
+          type="text"
+        />
+        
+        <p>Password</p>
+        <Input
+          name=""
+          placeholder=""
+          onChange={handleChangePass}
+          value={pass}
+          type="password"
         />
         
         <p className="span-space"></p>
@@ -47,8 +57,8 @@ const Login = () => {
         
         <button 
           onClick={handleToken}
-          className={isChecked && Email ? 'button-active' : 'button-inactive'}
-          disabled={!isChecked || !Email}
+          className={isChecked && Email && pass ? 'button-active' : 'button-inactive'}
+          disabled={!isChecked || !Email || !pass }
         >Crear cuenta</button>
        
       </div>

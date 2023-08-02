@@ -35,11 +35,17 @@ export const loginSlice = createSlice({
               ...state,
               Email:action.payload
           }
-      },
+        },
+        setPass: (state, action) => {
+          return {
+              ...state,
+              Pass:action.payload
+          }
+        },
     }
 })
 
-export const {setToken,setData, setEmail} =  loginSlice.actions
+export const {setToken,setData, setEmail, setPass} =  loginSlice.actions
 
 export default loginSlice.reducer
 

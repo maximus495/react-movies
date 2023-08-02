@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setEmail } from "~/redux/reducers/loginReducer";
@@ -6,6 +7,7 @@ import { RootState } from "~/redux/store/store";
 
 export const useLogin = () => {
   const { Email } = useSelector((state: RootState) => state.login);
+  const [pass, passText] = useState('');
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleNavigateDashboard = () => {
@@ -13,6 +15,9 @@ export const useLogin = () => {
   };
   const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setEmail(e.target.value));
+  };
+  const handleChangePass = (e: React.ChangeEvent<HTMLInputElement>) => {
+    passText(e.target.value);
   };
   const handleToken = async () => {
     const options = {
@@ -45,5 +50,5 @@ export const useLogin = () => {
         console.error(error);
       });
   };
-  return { handleNavigateDashboard, handleChangeEmail, handleToken, Email };
+  return { handleNavigateDashboard, handleChangeEmail, handleChangePass, handleToken, Email, pass };
 };
