@@ -14,7 +14,7 @@ interface AuthTemplateI {
 const Authtemplate = ({ title='', children }: AuthTemplateI) => {
   // const { Email } = useSelector((state:RootState)=>state.login)
   const navigate = useNavigate();
-
+  console.log(title)
   return (
     <div className="auth-template">
       <div className="navbar">
