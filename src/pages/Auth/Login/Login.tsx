@@ -8,7 +8,7 @@ import { useState } from "react";
 
 const Login = () => {
   
-  const { handleChangeEmail, handleChangePass, handleToken, Email, pass } = useLogin();
+  const { handleChangeEmail, handleChangePass, handleToken, Email, pass, validateEmail, validatePassword, emailError, passwordError } = useLogin();
   const [isChecked, setIsChecked] = useState(false); 
   
 
@@ -16,8 +16,7 @@ const Login = () => {
     setIsChecked(event.target.checked);
   };
 
-
-
+  
   return (
     <Authtemplate title="LOGIN">
 
@@ -34,8 +33,10 @@ const Login = () => {
           placeholder=""
           onChange={handleChangeEmail}
           value={Email}
+          onBlur={validateEmail}
           type="text"
         />
+        {emailError && <div className="error">{emailError}</div>}
         
         <p>Password</p>
         <Input
@@ -43,9 +44,10 @@ const Login = () => {
           placeholder=""
           onChange={handleChangePass}
           value={pass}
+          onBlur={validatePassword}
           type="password"
         />
-        
+        {passwordError && <div className="error">{passwordError}</div>}
         <p className="span-space"></p>
 
         <input

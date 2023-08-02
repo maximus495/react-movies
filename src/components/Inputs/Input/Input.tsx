@@ -4,6 +4,7 @@ interface InputI {
   isUser?: boolean;
   placeholder: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur: React.FocusEventHandler<HTMLInputElement>;
   value: string;
   type: string;
 }

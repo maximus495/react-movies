@@ -42,16 +42,37 @@ const Dashboard = memo(() => {
   const [currentPage, setCurrentPage] = useState(images.page);
   const [movieType, setMovieType] = useState("now_playing");
   const [showInfo, setShowInfo] = useState<MovieInfoState>({});
+  const [genres, setGenres] = useState([]);
+
+  const fetchGenres = async () => {
+    const options = {
+      method: "GET",
+      url: `https://api.themoviedb.org/3/genre/movie/list`,
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4OTExY2U2ZTBjNGUxZjQ4M2E3NDIxMDNjMDJmYjZmOSIsInN1YiI6IjY0MTM3ZDEyYTZjMTA0MDA3OTA3MTM2YyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IhXW1F90EvMAP_AMkFrEfMJdyuswuVnBY6_KlyVMkO0`
+      },
+    };
+
+    axios
+      .request(options)
+      .then(function (response) {
+        const newGenres = response.data.genres
+        setGenres(newGenres);
+        
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  }
 
   const getApiMovies = async ( page: number, type: string ) => {
-    console.log(page, type)
     const options = {
       method: "GET",
       url: `https://api.themoviedb.org/3/movie/${type}?language=en-US&page=${page}`,
       headers: {
         accept: "application/json",
-        Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4OTExY2U2ZTBjNGUxZjQ4M2E3NDIxMDNjMDJmYjZmOSIsInN1YiI6IjY0MTM3ZDEyYTZjMTA0MDA3OTA3MTM2YyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IhXW1F90EvMAP_AMkFrEfMJdyuswuVnBY6_KlyVMkO0",
+        Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4OTExY2U2ZTBjNGUxZjQ4M2E3NDIxMDNjMDJmYjZmOSIsInN1YiI6IjY0MTM3ZDEyYTZjMTA0MDA3OTA3MTM2YyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.IhXW1F90EvMAP_AMkFrEfMJdyuswuVnBY6_KlyVMkO0`
       },
     };
 
@@ -105,7 +126,12 @@ const Dashboard = memo(() => {
     }
 
     getApiMovies(1, movieType)
+
   }, [location, navigate] )
+
+  useEffect(() => {
+    fetchGenres();
+  }, []);
 
   return (
     <Authtemplate title="dashboard">
@@ -113,8 +139,6 @@ const Dashboard = memo(() => {
       <div className="principal-body">
 
         <div className="div-buttons" > 
-          {/* <button className={activeButton === 1 ? 'active-button' : 'top-buttons'}
-          onClick={() => handleButtonClick(1, 'upcoming')}> Lasted </button> */}
           <button className={activeButton === 1 ? 'active-button' : 'top-buttons'}
           onClick={() => handleButtonClick(1,'now_playing')}>Now playing</button>
           <button className={activeButton === 2 ? 'active-button' : 'top-buttons'}
@@ -128,24 +152,43 @@ const Dashboard = memo(() => {
         <h1 className="title-category">{movieType}</h1>
         
         <div className="div-images">
-          { images.results.map( ({id, poster_path, title, overview}) => (
+        {images.results.map(({ id, poster_path, title, overview, genre_ids }) => {
 
-              <div key={id} className="movie-item"
-                onMouseEnter={() => handleMouseEnter(id)}
-                onMouseLeave={() => handleMouseLeave(id)}
-              >
-                <img className="image-movies" key={id } src={`https://image.tmdb.org/t/p/w1280${poster_path}`} alt="Foto" />
-                
-                {showInfo[id] && (
-                  <div className="movie-info">
-                    <h3>{title}</h3>
-                    <p>{overview}</p>
-                  </div>
-                )}
-              </div>
-              
-              ))
-          }
+          const maxOverviewLength = 150;
+          const truncatedOverview = overview.length > maxOverviewLength ? `${overview.substring(0, maxOverviewLength)}...` : overview;
+
+
+
+          const genreNames = genre_ids.map((genreId: any) => {
+            const genre: any = genres.find((genre: { id: any; }) => genre.id === genreId);
+            return genre ? genre.name : 'Unknown Genre';
+          });
+
+          return (
+            <div
+              key={id}
+              className="movie-item"
+              onMouseEnter={() => handleMouseEnter(id)}
+              onMouseLeave={() => handleMouseLeave(id)}
+            >
+              <img
+                className="image-movies"
+                key={id}
+                src={`https://image.tmdb.org/t/p/w1280${poster_path}`}
+                alt="Foto"
+              />
+
+              {showInfo[id] && (
+                <div className="movie-info">
+                  <h3>{title}</h3>
+                  <p>Genres: {genreNames.join(', ')}</p>
+                  <p>{truncatedOverview}</p>
+                  
+                </div>
+              )}
+            </div>
+          );
+        })}
         </div>
 
         <div className="div-arrow">
