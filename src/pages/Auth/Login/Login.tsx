@@ -1,6 +1,6 @@
 import Input from "~/components/Inputs/Input/Input";
 import Authtemplate from "~/templates/AuthTemplate/Authtemplate";
-import { useLogin } from "./hooks/useLogin";
+import { useLogin, IErrors } from './hooks/useLogin';
 import groupfooter from "../../../assets/footergroup.png";
 import backgroundfooter from "../../../assets/footer-font.png"
 import "./Login.css"; 
@@ -8,13 +8,15 @@ import { useState } from "react";
 
 const Login = () => {
   
-  const { handleChangeEmail, handleChangePass, handleToken, Email, pass, validateEmail, validatePassword, emailError, passwordError } = useLogin();
-  const [isChecked, setIsChecked] = useState(false); 
+  const { handleChangeEmail, handleChangePass, handleToken, handleCheckboxChange, email, pass, isEmpty, isError, isChecked } = useLogin();
+  // const [isChecked, setIsChecked] = useState(false); 
   
 
-  const handleCheckboxChange = (event: { target: { checked: boolean | ((prevState: boolean) => boolean); }; }) => {
-    setIsChecked(event.target.checked);
-  };
+  // const handleCheckboxChange = (event: { target: { checked: boolean | ((prevState: boolean) => boolean); }; }) => {
+  //   setIsChecked(event.target.checked);
+  //   validateEmail();
+  //   validatePassword();
+  // };
 
   
   return (
@@ -29,28 +31,27 @@ const Login = () => {
 
         <p>Correo Electronico</p>
         <Input
-          name=""
+          name="email"
           placeholder=""
           onChange={handleChangeEmail}
-          value={Email}
-          onBlur={validateEmail}
+          value={email ?? ""}
           type="text"
         />
-        {emailError && <div className="error">{emailError}</div>}
+        {isError?.email && <div className="error">{isError?.email}</div>}
         
         <p>Password</p>
         <Input
-          name=""
+          name="pass"
           placeholder=""
           onChange={handleChangePass}
-          value={pass}
-          onBlur={validatePassword}
+          value={pass ?? ""}
           type="password"
         />
-        {passwordError && <div className="error">{passwordError}</div>}
+        {isError?.pass && <div className="error">{isError?.pass}</div>}
         <p className="span-space"></p>
 
         <input
+          name="terms"
           type="checkbox"
           checked={isChecked}
           onChange={handleCheckboxChange}
@@ -59,9 +60,11 @@ const Login = () => {
         
         <button 
           onClick={handleToken}
-          className={isChecked && Email && pass ? 'button-active' : 'button-inactive'}
-          disabled={!isChecked || !Email || !pass }
+          className={!isChecked || isEmpty || Object.values(isError).filter(Boolean).length > 0 ? 'button-inactive' : 'button-active'}
+          disabled={ !isChecked || isEmpty || Object.values(isError).filter(Boolean).length > 0 }
         >Crear cuenta</button>
+
+        <h1>s{Object.values(isError).filter(Boolean).length}</h1>
        
       </div>
 

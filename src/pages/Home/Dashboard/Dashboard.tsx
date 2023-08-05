@@ -1,5 +1,5 @@
 import axios from "axios";
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useState, useRef } from "react";
 // import { useSelector } from "react-redux";
 // import { RootState } from "~/redux/store/store";
 import Authtemplate from "~/templates/AuthTemplate/Authtemplate";
@@ -25,6 +25,8 @@ interface MovieInfoState {
 
 const Dashboard = memo(() => {
   // const { Email } = useSelector((state:RootState)=>state.login)
+  const prevArrowRef = useRef<HTMLDivElement>(null);
+  const nextArrowRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -98,6 +100,18 @@ const Dashboard = memo(() => {
   const handlePrevClick = async () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
+      
+      if (prevArrowRef.current) {
+        if (currentPage -1 == 1) {
+          prevArrowRef.current.classList.add('button-arrow-disable'); // Agregar la clase 'miclase'
+        } else {
+          prevArrowRef.current.classList.remove('button-arrow-disable'); // Eliminar la clase 'miclase'
+          if (nextArrowRef.current) {
+            nextArrowRef.current.classList.remove('button-arrow-disable'); 
+          }
+        }
+      }
+
       await getApiMovies(currentPage - 1, movieType)
     }
   };
@@ -105,6 +119,21 @@ const Dashboard = memo(() => {
   const handleNextClick = async () => {
     if (currentPage < images.total_pages) {
       setCurrentPage(currentPage + 1);
+
+
+      console.log(currentPage )
+
+      if (nextArrowRef.current) {
+        if (currentPage + 1 == images.total_pages) {
+          nextArrowRef.current.classList.add('button-arrow-disable'); // Agregar la clase 'miclase'
+        } else {
+          nextArrowRef.current.classList.remove('button-arrow-disable'); // Eliminar la clase 'miclase'
+          if (prevArrowRef.current) {
+            prevArrowRef.current.classList.remove('button-arrow-disable'); 
+          }
+        }
+      }
+      
       await getApiMovies(currentPage + 1, movieType)
     }
   };
@@ -123,6 +152,14 @@ const Dashboard = memo(() => {
     if (!state || !state.token || !state.username || !state.expires_at) {
       // Si falta algún dato en el estado, redirigir al login
       navigate('/');
+    }
+
+    if (prevArrowRef.current) {
+      if (currentPage == 1) {
+        prevArrowRef.current.classList.add('button-arrow-disable'); // Agregar la clase 'miclase'
+      } else {
+        prevArrowRef.current.classList.remove('button-arrow-disable'); // Eliminar la clase 'miclase'
+      }
     }
 
     getApiMovies(1, movieType)
@@ -187,15 +224,14 @@ const Dashboard = memo(() => {
           );
         })}
         </div>
-
         <div className="div-arrow">
-          <div className="button-arrow" onClick={ handlePrevClick }>
+          <div id="prevArrow" ref={prevArrowRef} className="button-arrow" onClick={ handlePrevClick }>
             <span className="material-symbols-outlined" >
               arrow_back_ios
             </span>
           </div>
           <span>{ images.page } / { images.total_pages }</span>
-          <div className="button-arrow" onClick={ handleNextClick }>
+          <div id="nextArrow" ref={nextArrowRef} className="button-arrow" onClick={ handleNextClick }>
             <span className="material-symbols-outlined" >
               arrow_forward_ios
             </span>

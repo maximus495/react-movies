@@ -1,53 +1,61 @@
 import axios from "axios";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setEmail } from "~/redux/reducers/loginReducer";
-import { RootState } from "~/redux/store/store";
+
+export interface IErrors {
+  email: string | null;
+  pass: string | null;
+  isChecked?: boolean | string;
+}
 
 export const useLogin = () => {
-  const { Email } = useSelector((state: RootState) => state.login);
-  const [pass, passText] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const [ email, setEmail ] = useState('');
+  const [ pass, setPass ] = useState('');
+  const [ isChecked, setIsChecked ] = useState(false);
 
+  const [isEmpty, setIsEmpty] = useState<boolean>(true);
+  const [isError, setIsError] = useState<IErrors>({
+    email: " ",
+    pass: " ",
+  });
+ 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const handleNavigateDashboard = () => {
-    navigate("/dashboard");
-  };
+
   const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(setEmail(e.target.value));
-    validateEmail();
-  };
-  const handleChangePass = (e: React.ChangeEvent<HTMLInputElement>) => {
-    passText(e.target.value);
-    validatePassword();
+    e.target.name === "email" &&
+        setIsError({
+          ...isError,
+          [e.target.name]: !validEmail(e.target.value)
+            ? "Escribe un email valido."
+            : null,
+        });
+    setEmail(e.target.value);
+    setIsEmpty(!(e.target.value.length > 0));
+    console.log('setIsEmpty-email: ',!(e.target.value.length > 0))
   };
 
-  const validateEmail = () => {
-    if (!Email.match(/^\S+@\S+\.\S+$/)) {
-      setEmailError('Ingrese un correo válido');
-    } else {
-      setEmailError('');
-    }
+  const handleChangePass = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.target.name === "pass" &&
+    setIsError({
+      ...isError,
+      [e.target.name]:
+        e.target.value.length < 7
+          ? "La contraseña debe tener al menos 7 caracteres."
+          : null,
+    });
+    setPass(e.target.value);
+    setIsEmpty(!(e.target.value.length > 0));
+    console.log('setIsEmpty-pass: ',!(e.target.value.length > 0))
   };
-  
-  const validatePassword = () => {
-    if (pass.length < 7) {
-      console.log('entro a pass')
-      setPasswordError('La contraseña debe tener al menos 7 caracteres');
-    } else {
-      setPasswordError('');
-    }
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsChecked(e.target.checked);
+    setIsEmpty(!e.target.checked);
   };
 
   const handleToken = async () => {
 
-    validateEmail();
-    validatePassword();
-
-    if (!emailError && !passwordError) {
+    if (isChecked || !isEmpty || Object.values(isError).filter(Boolean).length == 0) {
 
       const options = {
         method: "GET",
@@ -68,7 +76,7 @@ export const useLogin = () => {
             navigate("/dashboard", {
               state: {
                 token,
-                username: Email,
+                username: email,
                 expires_at: response.data.expires_at,
               },
             });
@@ -79,5 +87,18 @@ export const useLogin = () => {
         });
     }
   };
-  return { handleNavigateDashboard, handleChangeEmail, handleChangePass, handleToken, Email, pass, validateEmail, validatePassword, emailError, passwordError };
+
+  return { 
+    handleChangeEmail, 
+    handleChangePass, 
+    handleToken, 
+    handleCheckboxChange,
+    email, 
+    pass, 
+    isChecked,
+    isEmpty,
+    isError };
 };
+
+const validEmail = (email: string): boolean =>
+  /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
