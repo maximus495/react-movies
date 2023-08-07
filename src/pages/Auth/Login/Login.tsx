@@ -1,10 +1,9 @@
 import Input from "~/components/Inputs/Input/Input";
 import Authtemplate from "~/templates/AuthTemplate/Authtemplate";
-import { useLogin, IErrors } from './hooks/useLogin';
+import { useLogin } from './hooks/useLogin';
 import groupfooter from "../../../assets/footergroup.png";
 import backgroundfooter from "../../../assets/footer-font.png"
 import "./Login.css"; 
-import { useState } from "react";
 
 const Login = () => {
   
