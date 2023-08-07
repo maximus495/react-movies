@@ -63,7 +63,7 @@ const Login = () => {
           disabled={ !isChecked || isEmpty || Object.values(isError).filter(Boolean).length > 0 }
         >Crear cuenta</button>
 
-        <h1>s{Object.values(isError).filter(Boolean).length}</h1>
+        {/* <h1>s{Object.values(isError).filter(Boolean).length}</h1> */}
        
       </div>
 
