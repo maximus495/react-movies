@@ -94,6 +94,12 @@ const Dashboard = memo(() => {
     setActiveButton(buttonNumber);
     setMovieType(type);
     setCurrentPage(1)
+    if (prevArrowRef.current) {
+        prevArrowRef.current.classList.add('button-arrow-disable'); // Agregar la clase 'miclase'
+    }
+    if (nextArrowRef.current) {
+      nextArrowRef.current.classList.remove('button-arrow-disable'); 
+    }
     await getApiMovies(1, type);
   };
 
